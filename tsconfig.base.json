@@ -10,14 +10,12 @@
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "outDir": "compiled",
     "pretty": true,
     "removeComments": true,
     "sourceMap": true,
     "strict": true,
-    "target": "es5"
+    "target": "es6"
   },
   "exclude": ["node_modules", "dist"],
   "include": ["src"]

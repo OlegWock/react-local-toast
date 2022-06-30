@@ -4,6 +4,7 @@ import nodeResolve from 'rollup-plugin-node-resolve'
 import replace from 'rollup-plugin-replace'
 import { sizeSnapshot } from 'rollup-plugin-size-snapshot'
 import sourcemaps from 'rollup-plugin-sourcemaps'
+import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import { terser } from 'rollup-plugin-terser'
 import pkg from './package.json'
 
@@ -23,7 +24,7 @@ const getGlobals = (bundleType) => {
 
   switch (bundleType) {
     case UMD_DEV:
-      return { ...baseGlobals, 'prop-types': 'PropTypes' }
+      return { ...baseGlobals }
     case UMD_PROD:
       return baseGlobals
     default:
@@ -92,6 +93,7 @@ const getBabelConfig = (bundleType) => {
 }
 
 const getPlugins = (bundleType) => [
+  peerDepsExternal(),
   nodeResolve(),
   commonjs({
     include: 'node_modules/**',
@@ -115,6 +117,12 @@ const getPlugins = (bundleType) => [
         'string',
         'symbol',
       ],
+      'node_modules/react-is/index.js': [
+        'typeOf',
+        'isElement',
+        'isValidElementType',
+        'ForwardRef'
+      ]
     },
   }),
   babel(getBabelConfig(bundleType)),
@@ -142,7 +150,7 @@ const getCjsConfig = (bundleType) => ({
   input,
   external: getExternal(bundleType),
   output: {
-    exports: 'default',
+    exports: 'named',
     file: `dist/react-local-toast.cjs.${
       isProduction(bundleType) ? 'production' : 'development'
     }.js`,
@@ -183,5 +191,5 @@ export default [
   getCjsConfig(CJS_PROD),
   getEsConfig(),
   getUmdConfig(UMD_DEV),
-  getUmdConfig(UMD_PROD),
+  getUmdConfig(UMD_PROD)
 ]
