@@ -193,7 +193,7 @@ interface MyToastData {
 }
 ```
 
-1. Implement your Toast component. It should accept props of type `ToastComponentProps<T>` where `T` is your data type. Again, if you're using good old JavaScript, you can skip all this typing stuff, just implement Toast!
+2. Implement your Toast component. It should accept props of type `ToastComponentProps<T>` where `T` is your data type. Again, if you're using good old JavaScript, you can skip all this typing stuff, just implement Toast!
 
 ```tsx
 const MyToast = (props: ToastComponentProps<MyToastData>) => {
@@ -215,7 +215,7 @@ const MyToast = (props: ToastComponentProps<MyToastData>) => {
 };
 ```
 
-1. Cool. Now give this component to `createCustomLocalToast` function. It will return you `Provider`, `Target` and `useCustomLocalToast`. You can export `Provider` and `Target` as is. `useCustomLocalToast` can be used as is too, but let's make this a bit prettier.
+3. Cool. Now give this component to `createCustomLocalToast` function. It will return you `Provider`, `Target` and `useCustomLocalToast`. You can export `Provider` and `Target` as is. `useCustomLocalToast` can be used as is too, but let's make this a bit prettier.
 
 ```typescript
 const {Provider, Target, useCustomLocalToast} = createCustomLocalToast(MyToast);
@@ -246,7 +246,7 @@ export const useMyLocalToast = () => {
 };
 ```
 
-1. Congratulations! Now you can use your custom toasts. Just don't forget to wrap your app in `Provider` and target components in `Target`.
+4. Congratulations! Now you can use your custom toasts. Just don't forget to wrap your app in `Provider` and target components in `Target`.
 
 
 ## API
