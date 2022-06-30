@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.base.json",
+  "exclude": ["node_modules"],
+  "include": ["scripts", "src", "test"],
+  "compilerOptions": {
+    "allowJs": true,
+    "declaration": false,
+    "declarationDir": null,
+    "module": "commonjs"
+  }
+}
