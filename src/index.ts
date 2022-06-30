@@ -1,5 +1,4 @@
-import type { LocalToastTargetProps } from './wrapper';
-export { useLocalToast } from './hooks';
-export { LocalToastProvider } from './provider';
-export { LocalToastTarget } from './wrapper';
+export { createCustomLocalToast } from './factory';
+export { useLocalToast, Provider as LocalToastProvider, Target as LocalToastTarget} from './default-implementation';
+export type {ToastComponentProps, ToastPlacement} from './types';
 
