@@ -96,6 +96,8 @@ Cool, huh?
 
 ### ... use my own design for toast?
 
+For minor adjustments you can use write custom CSS. Default toast component exposes several classes, see details in file [default-implementation.tsx](src/default-implementation.tsx#L161-L166).
+
 `LocalToastProvider` accepts prop `Component`, you can supply your component which will be used as toast. To see which props available to use in component, refer to [default Toast implementation](https://github.com/OlegWock/react-local-toast/blob/master/src/toast.tsx#L5-L9).
 
 ```jsx
