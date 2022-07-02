@@ -1,7 +1,6 @@
 # react-local-toast
 
 [![npm version][npmv-image]][npmv-url]
-[![build status][build-image]][build-url]
 [![npm downloads][npmd-image]][npmd-url]
 
 > Local toast helps you to provide feedback related to particular components on page
@@ -331,8 +330,6 @@ removeAll() => void;
 
 MIT
 
-[build-image]: https://img.shields.io/github/workflow/status/OlegWock/react-local-toast/CI?style=flat-square
-[build-url]: https://github.com/OlegWock/react-local-toast/actions?query=workflow%3ACI
 [npmv-image]: https://img.shields.io/npm/v/react-local-toast.svg?style=flat-square
 [npmv-url]: https://www.npmjs.com/package/react-local-toast
 [npmd-image]: https://img.shields.io/npm/dm/react-local-toast.svg?style=flat-square
