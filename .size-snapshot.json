@@ -5,21 +5,21 @@
     "gzipped": 3097
   },
   "react-local-toast.cjs.production.js": {
-    "bundled": 18965,
-    "minified": 10949,
-    "gzipped": 3103
+    "bundled": 20306,
+    "minified": 12081,
+    "gzipped": 3351
   },
   "react-local-toast.esm.js": {
-    "bundled": 17425,
-    "minified": 9687,
-    "gzipped": 2953,
+    "bundled": 18599,
+    "minified": 10693,
+    "gzipped": 3201,
     "treeshaked": {
       "rollup": {
-        "code": 2317,
-        "import_statements": 429
+        "code": 2684,
+        "import_statements": 492
       },
       "webpack": {
-        "code": 8088
+        "code": 8872
       }
     }
   },
@@ -29,8 +29,22 @@
     "gzipped": 26232
   },
   "react-local-toast.umd.production.js": {
-    "bundled": 108369,
-    "minified": 55222,
-    "gzipped": 19596
+    "bundled": 110819,
+    "minified": 56611,
+    "gzipped": 20075
+  },
+  "internals.js": {
+    "bundled": 10559,
+    "minified": 4740,
+    "gzipped": 1686,
+    "treeshaked": {
+      "rollup": {
+        "code": 119,
+        "import_statements": 119
+      },
+      "webpack": {
+        "code": 1268
+      }
+    }
   }
 }

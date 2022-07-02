@@ -46,6 +46,7 @@
   "dependencies": {
     "@babel/runtime": "^7.14.6",
     "@radix-ui/react-slot": "^0.1.2",
+    "clsx": "^1.1.1",
     "react-icons": "^4.4.0",
     "react-transition-group": "^4.4.2",
     "styled-components": "^5.3.5",

@@ -1,8 +1,10 @@
 import React from 'react';
 import styled, { css, keyframes } from 'styled-components';
+import clsx from 'clsx';
 import { IoIosCheckmarkCircle, IoIosInformationCircle } from 'react-icons/io';
 import { IoCloseCircleSharp } from 'react-icons/io5';
 import { RiErrorWarningFill } from 'react-icons/ri';
+import { AiOutlineLoading } from 'react-icons/ai';
 import { TransitionStatus } from 'react-transition-group';
 import { createCustomLocalToast } from './factory';
 import { DefaultActionData, ToastPlacement, ToastComponentProps } from './types';
@@ -46,8 +48,18 @@ const animations = {
     `,
 };
 
+const spinKeyframes = keyframes`
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+`;
+
 const colorByType = {
     info: '#3498db',
+    loading: '#3498db',
     success: '#2ecc71',
     warning: '#fa983a',
     error: '#eb2f06',
@@ -79,11 +91,18 @@ const ErrorIcon = styled(IoCloseCircleSharp)`
     color: ${colorByType.error};
 `;
 
+const LoadingIcon = styled(AiOutlineLoading)`
+    ${iconSharedStyles};
+    color: ${colorByType.loading};
+    animation: ${spinKeyframes} linear infinite 1.5s;
+`;
+
 const iconByType = {
     info: InfoIcon,
     success: SuccessIcon,
     warning: WarningIcon,
     error: ErrorIcon,
+    loading: LoadingIcon,
 };
 
 const ToastText = styled.span`
@@ -97,6 +116,7 @@ const StyledToast = styled.div<{
     $duration: number;
     $placement: ToastPlacement;
 }>`
+    --start-angle: 0deg;
     padding: 6px 12px;
     background-color: white;
     font-size: 14px;
@@ -117,6 +137,7 @@ const StyledToast = styled.div<{
             return css`
                 ${animations[$placement]} ${$duration}ms linear 0s 1 reverse
             `;
+
         return `none`;
     }};
 `;
@@ -126,6 +147,13 @@ const ToastComponent = React.forwardRef(
         const Icon = iconByType[props.data.type];
         return (
             <StyledToast
+                className={clsx({
+                    'react-local-toast': true,
+                    [`react-local-toast-${props.data.type}`]: true,
+                    'react-local-toast-persistent': props.animation.duration === 0,
+                    [`react-local-toast-${props.animation.state}`]: true,
+                    [`react-local-toast-${props.placement}`]: true,
+                })}
                 $type={props.data.type}
                 $placement={props.placement}
                 $state={props.animation.state}
@@ -133,8 +161,8 @@ const ToastComponent = React.forwardRef(
                 style={props.style}
                 ref={ref as React.Ref<HTMLDivElement>}
             >
-                <Icon />
-                <ToastText>{props.data.text}</ToastText>
+                <Icon className="react-local-toast-icon" />
+                <ToastText className="react-local-toast-text">{props.data.text}</ToastText>
             </StyledToast>
         );
     }

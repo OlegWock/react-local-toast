@@ -59,7 +59,7 @@ export type Action<T> = ActionCreate<T> | ActionUpdate<T> | ActionRemove | Actio
 
 export interface DefaultActionData {
     text: string;
-    type: 'info' | 'success' | 'warning' | 'error';
+    type: 'info' | 'success' | 'warning' | 'error' | 'loading';
 }
 
 export type DefaultToastData = ToastComponentProps<DefaultActionData>;
