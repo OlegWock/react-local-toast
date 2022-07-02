@@ -13,11 +13,15 @@
 * Toast can be displayed on right/left/top/bottom side of component.
 * Toast can be hidden after some timout or hidden programatically.
 * Component might have multiple toasts.
-* Multiple toasts stucks **vertically**, even if displayed on left or right side.
-* `info`, `success`, `warning` and `error` toasts out of the box.
+* Multiple toasts stucks **vertically** (even if displayed on left or right side).
+* `info`, `success`, `warning`, `error` and `loading` toasts out of the box.
 * You can bring your own design. Or your own Toast component. Or your custom implementation of toasts.
 * TypeScript!
 
+
+## Showcase
+
+**Work in progress**
 
 ## Installation
 
@@ -70,7 +74,7 @@ export const App = () => {
 };
 ```
 
-Local toast uses refs to calculate position of component, so in case you want to use toasts with functional components – make sure they are wrapped in `React.forwardRef`.
+Local toast uses refs to get position of component, so in case you want to use toasts with functional components – make sure they are wrapped in `React.forwardRef`.
 
 And final piece! Update your component to actually produce local toasts:
 
@@ -81,7 +85,7 @@ import { LocalToastTarget, useLocalToast } from 'react-local-toast';
 
 export const App = () => {
     // Use hook to show and hide toasts
-    const {showToast, hideToast} = useLocalToast();
+    const {showToast, removeToast} = useLocalToast();
 
     return (<div>
         <p>This component should be inside LocalToastProvider</p>
@@ -93,14 +97,6 @@ export const App = () => {
 ```
 
 Cool, huh?
-
-## Live Examples
-
-- [Basic Usage](https://codesandbox.io/)
-- [API Example](https://codesandbox.io/)
-- [UMD Build (Development)](https://codesandbox.io/)
-- [UMD Build (Production)](https://codesandbox.io/)
-
 
 ## How can I ...
 
@@ -135,10 +131,12 @@ import React from 'react';
 import { LocalToastTarget, useLocalToast } from 'react-local-toast';
 
 export const App = () => {
-    const toastId = showToast('btn', (<div>
-        This looks kinda hacky, but I guess it's fine for one-time trick. 
-        <button onClick={() => removeToast(toastId)}>Dismiss</button>
-    </div>), {type: 'success', duration: 0});
+    const showJsxToast = () => {
+        const toastId = showToast('btn', (<div>
+            This looks kinda hacky, but I guess it's fine for one-time trick. 
+            <button onClick={() => removeToast(toastId)}>Dismiss</button>
+        </div>), {type: 'success', duration: 0});
+    };
 
     const {showToast, removeToast} = useLocalToast();
 
@@ -171,7 +169,7 @@ export default () => {
 
 If you need even finer control over toasts, you could provide your custom implementation. Do not be scared, it's not that hard.
 
-When this might be handy? When default implementation isn't enough for you obviously. E.g. you need to pass a lot more data that standart `type` and `text`. Maybe you want to have both `title` and `message` for toast? Or custom `confirm` type with buttons? You're in the right place of documentation, friend.
+When this might be handy? When default implementation isn't enough for you obviously. E.g. you need to pass a lot more data than standart `type` and `text`. Maybe you want to have both `title` and `message` for toast? Or custom `confirm` type with buttons? You're in the right place of documentation, friend.
 
 To provide custom implementation:
 
@@ -185,7 +183,7 @@ interface MyToastData {
 }
 ```
 
-2. Implement your Toast component. It should accept props of type [`ToastComponentProps<T>`](src/types.ts#L22-L30) where `T` is your data type. Again, if you're using good old JavaScript, you can skip all this typing stuff, just implement Toast!
+2. Implement your Toast component. It should accept props of type [`ToastComponentProps<T>`](src/types.ts#L22-L30) where `T` is your data type. Again, if you're using good old JavaScript, you can skip all this typing stuff, just implement Toast! Important note: react-local-toast uses `style` prop to provide coordinates to toast component, do not forget to pass them to your root node.
 
 ```tsx
 const MyToast = (props: ToastComponentProps<MyToastData>) => {
@@ -235,22 +233,21 @@ export const useMyLocalToast = () => {
 
 ## API
 
-Properties in **bold** are required, other are optionsl
+Properties in **bold** are required, other are optional.
 
 ### `LocalToastProvider`
 
 | Property | Type | Default | Description |
--------------------------------------------
+|----------|------|---------|-------------|
 | `Component` | React component | `ToastComponent` | Component used to display toasts |
 | `animationDuration` | number (ms) | `80` | Self explanatory |
 | `defaultPlacement` | `'top' | 'right' | 'bottom' | 'left'` | `top` | This might be set on per-toast basis too |
-| `` | x | x | x |
 
 
 ### `LocalToastTarget`
 
 | Property | Type | Default | Description |
--------------------------------------------
+|----------|------|---------|-------------|
 | **`name`** | string | - | This should be unique string used to identify toast target |
 | **`children`** | React element | - | Lib uses refs to track toast targets, so make sure your child component accept props |
 
@@ -292,6 +289,30 @@ removeAllByName(targetName);
 removeAll();
 ```
 
+### Custom `ToastComponent`
+
+This is list of props your custom toast component will receive:
+
+style: React.CSSProperties;
+    id: string;
+    name: string;
+    removeMe: () => void;
+    animation: {state: TransitionStatus;
+    duration: number;
+    disableTransitions: boolean;};
+    placement: ToastPlacement;
+    data: T;
+| Property | Type | Description |
+|----------|------|-------------|
+| `id` | string | ID of toast |
+| `name` | string | Name of target this toast is attached to |
+| `removeMe` | Function `() => void` | Call this to remove current toast |
+| `placement` | `'top' | 'right' | 'bottom' | 'left'` | Placement of current toast. Might be useful to figure out which animation to use |
+| `data` | `T` | Data you passed to `addToast` function |
+| `animation` | Object | Contains data which might be handy for animating toast |
+| `animation.state` | `"entering" | "entered" | "exiting" | "exited" | "unmounted"` | State of toas. You probably want to enable animation when toast in `entering` or/and `exiting` state |
+| `animation.duration` | number | Duration of animation from provider |
+| `animation.disableTransitions` | boolean | This will be true for renders where react-local-toast changes toas position (e.g. toast size changed and now requires repositioning) which shouldn't be transitioned (in opposition to positioan changes that you probably want to animate, like moving toast closer to target once previous toast was removed). Since if you enable transition and change elements position in same tick -- position change will be animated, I'd recommend to postpone enabling transition for next render (see example in [default-implementation.tsx](src/default-implementation.tsx#L148-155)). |
 
 ### `useCustomLocalToast`
 
