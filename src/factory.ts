@@ -1,21 +1,25 @@
 import React from "react";
 import { createContext, LocalToastContextType } from "./context";
-import { createProvider } from "./provider";
-import { createTarget } from "./target";
-import { ToastPlacement } from "./types";
+import { createProvider, LocalToastProviderType } from "./provider";
+import { createTarget, LocalToastTargetType } from "./target";
+import { ToastComponentType } from "./types";
 
-export const createCustomLocalToast = <T>(component: LocalToastContextType<T>["Component"], placement: ToastPlacement = 'top') => {
-    // Create context
+
+
+interface CreateCustomLocalToastResult<T> {
+    Provider: LocalToastProviderType<T>,
+    Target: LocalToastTargetType,
+    useCustomLocalToast: () => Pick<LocalToastContextType<T>, "addToast" | "updateToast" | "removeToast" | "removeAllByName" | "removeAll">
+}
+
+export const createCustomLocalToast = <T>(component: ToastComponentType<T>): CreateCustomLocalToastResult<T> => {
     const Context = createContext(component);
-    // Create context provider
-    const Provider = createProvider(Context, component, placement);
-    // Create LocalToastTarget binded to context
+    const Provider = createProvider(Context, component);
     const Target = createTarget(Context);
-    // Create hook
     
     const useCustomLocalToast = () => {
-        const {addToast, removeToast, removeAllByName, removeAll} = React.useContext(Context);
-        return {addToast, removeToast, removeAllByName, removeAll};
+        const {addToast, updateToast, removeToast, removeAllByName, removeAll} = React.useContext(Context);
+        return {addToast, updateToast, removeToast, removeAllByName, removeAll};
     };
 
     return {Provider, Target, useCustomLocalToast};

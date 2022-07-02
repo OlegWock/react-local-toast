@@ -1,6 +1,6 @@
 {
   "name": "react-local-toast",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Local toast helps you to provide feedback related to particular components on page",
   "main": "dist/index.js",
   "module": "dist/react-local-toast.esm.js",
@@ -54,6 +54,8 @@
   "dependencies": {
     "@babel/runtime": "^7.14.6",
     "@radix-ui/react-slot": "^0.1.2",
+    "react-icons": "^4.4.0",
+    "react-transition-group": "^4.4.2",
     "styled-components": "^5.3.5",
     "tslib": "^2.3.0",
     "uuid": "^8.3.2"
@@ -68,15 +70,14 @@
     "@testing-library/react": "12.0.0",
     "@testing-library/user-event": "13.1.9",
     "@types/jest": "26.0.24",
-    "@types/prop-types": "15.7.4",
     "@types/react": "^18.0.14",
     "@types/react-dom": "^18.0.5",
+    "@types/react-transition-group": "^4.4.5",
     "@types/styled-components": "^5.1.25",
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "4.28.3",
     "@typescript-eslint/parser": "4.28.3",
     "babel-core": "6.26.3",
-    "babel-plugin-transform-react-remove-prop-types": "0.4.24",
     "cross-env": "7.0.3",
     "eslint": "7.30.0",
     "eslint-config-prettier": "8.3.0",

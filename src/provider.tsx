@@ -1,19 +1,23 @@
 import React from "react";
 import {v4 as uuidv4} from 'uuid';
+import { DEFAULT_ANIMATION_DURATION, DEFAULT_PLACEMENT } from "./const";
 import { LocalToastContextType } from "./context";
-import { Action, ToastPlacement, ToastComponentProps } from "./types";
+import { Action, ToastPlacement, ToastComponentType } from "./types";
 import { createViewport } from "./viewport";
 
-interface LocalToastProviderProps<T> {
+export interface LocalToastProviderProps<T> {
     children?: React.ReactNode,
-    Component?: React.ComponentType<ToastComponentProps<T>>,
+    Component?: ToastComponentType<T>,
+    animationDuration?: number,
+    defaultPlacement?: ToastPlacement,
 }
 
+export type LocalToastProviderType<T> = (props: LocalToastProviderProps<T>) => JSX.Element;
 
-export const createProvider = <T,>(Context: React.Context<LocalToastContextType<T>>, ToastComponent: React.ComponentType<ToastComponentProps<T>>, defaultPlacement: ToastPlacement = 'top') => {
+export const createProvider = <T,>(Context: React.Context<LocalToastContextType<T>>, ToastComponent: ToastComponentType<T>): LocalToastProviderType<T> => {
     const Viewport = createViewport(Context);
 
-    return ({children, Component = ToastComponent}: LocalToastProviderProps<T>) => {
+    return ({children, Component = ToastComponent, animationDuration = DEFAULT_ANIMATION_DURATION, defaultPlacement = DEFAULT_PLACEMENT}: LocalToastProviderProps<T>) => {
         const [refs, setRefs] = React.useState<LocalToastContextType<T>["refs"]>({});
         const [q, setQ] = React.useState<LocalToastContextType<T>["q"]>([]);
 
@@ -44,31 +48,34 @@ export const createProvider = <T,>(Context: React.Context<LocalToastContextType<
         const addToast = (name: string, data: T, placement: ToastPlacement = defaultPlacement) => {
             const ref = refs[name];
             if (!ref || !ref.current) {
-                console.warn(`Tried to show toast on unmounted component '${name}'`);
+                console.warn(`Tried to show toast on not mounted component '${name}'`);
             }
 
-            console.log('Showing toast with data', data, 'on element with name', name, ref.current);
             const id = uuidv4();
-            // TODO: calculate x and y, take into account `placement`
-            const x = 0;
-            const y = 0;
 
             dispatchAction({
                 type: 'create',
                 descriptor: {
                     name,
                     id,
+                    placement,
+                    ref,
                     data,
-                    x,
-                    y,
                 }  
             });
 
             return id;
         };
+
+        const updateToast = (id: string, newData: Partial<T>) => {
+            dispatchAction({
+                type: 'update',
+                id,
+                newData,
+            });
+        };
     
         const removeToast = (id: string) => {
-            console.log('Hiding toast', id);
             dispatchAction({
                 type: 'remove',
                 id,
@@ -92,12 +99,14 @@ export const createProvider = <T,>(Context: React.Context<LocalToastContextType<
         return (<Context.Provider value={{
             Component,
             placement: defaultPlacement,
+            animationDuration,
             q,
             setQ,
             refs,
             registerRef,
             removeRef,
             addToast,
+            updateToast,
             removeToast,
             removeAllByName,
             removeAll

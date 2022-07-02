@@ -51,7 +51,7 @@ const getExternal = (bundleType) => {
     case ES:
       return makeExternalPredicate([...peerDependencies, ...dependencies])
     case UMD_DEV:
-      return makeExternalPredicate([...peerDependencies, 'prop-types'])
+      return makeExternalPredicate([...peerDependencies])
     default:
       return makeExternalPredicate(peerDependencies)
   }
@@ -75,7 +75,6 @@ const getBabelConfig = (bundleType) => {
         ...options,
         plugins: [
           ...options.plugins,
-          ['transform-react-remove-prop-types', { mode: 'wrap' }],
         ],
       }
     case UMD_PROD:
@@ -84,7 +83,6 @@ const getBabelConfig = (bundleType) => {
         ...options,
         plugins: [
           ...options.plugins,
-          ['transform-react-remove-prop-types', { removeImport: true }],
         ],
       }
     default:
@@ -94,29 +92,10 @@ const getBabelConfig = (bundleType) => {
 
 const getPlugins = (bundleType) => [
   peerDepsExternal(),
-  nodeResolve(),
+  nodeResolve({browser: true}),
   commonjs({
     include: 'node_modules/**',
     namedExports: {
-      'node_modules/prop-types/index.js': [
-        'any',
-        'array',
-        'arrayOf',
-        'bool',
-        'element',
-        'exact',
-        'func',
-        'instanceOf',
-        'node',
-        'number',
-        'object',
-        'objectOf',
-        'oneOf',
-        'oneOfType',
-        'shape',
-        'string',
-        'symbol',
-      ],
       'node_modules/react-is/index.js': [
         'typeOf',
         'isElement',
@@ -171,25 +150,8 @@ const getEsConfig = () => ({
   plugins: getPlugins(ES),
 })
 
-const getUmdConfig = (bundleType) => ({
-  input,
-  external: getExternal(bundleType),
-  output: {
-    file: `dist/react-local-toast.umd.${
-      isProduction(bundleType) ? 'production' : 'development'
-    }.js`,
-    format: 'umd',
-    globals: getGlobals(bundleType),
-    name: 'ReactLocalToast',
-    sourcemap: true,
-  },
-  plugins: getPlugins(bundleType),
-})
-
 export default [
   getCjsConfig(CJS_DEV),
   getCjsConfig(CJS_PROD),
   getEsConfig(),
-  getUmdConfig(UMD_DEV),
-  getUmdConfig(UMD_PROD)
 ]

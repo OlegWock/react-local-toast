@@ -7,7 +7,9 @@ export interface LocalToastTargetProps {
     children: React.ReactNode
 }
 
-export const createTarget = <T,>(Context: React.Context<LocalToastContextType<T>>) => {
+export type LocalToastTargetType = (props: LocalToastTargetProps) => JSX.Element; 
+
+export const createTarget = <T,>(Context: React.Context<LocalToastContextType<T>>): LocalToastTargetType => {
 
     return ({name, children}: LocalToastTargetProps) => {
         const ctx = React.useContext(Context);

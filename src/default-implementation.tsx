@@ -1,33 +1,152 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { css, keyframes } from "styled-components";
+import { IoIosCheckmarkCircle, IoIosInformationCircle } from 'react-icons/io';
+import { IoCloseCircleSharp } from 'react-icons/io5';
+import { RiErrorWarningFill } from 'react-icons/ri';
+import { TransitionStatus } from 'react-transition-group';
 import { createCustomLocalToast } from "./factory";
 import { DefaultActionData, ToastPlacement, ToastComponentProps } from "./types";
+import { DEFAULT_PLACEMENT } from "./const";
 
-const StyledToast = styled.div<{$x: number, $y: number}>`
-    position: absolute;
-    top: ${({$y}) => $y}px;
-    left: ${({$x}) => $x}px;
-    padding: 4px;
-    background-color: white;
-    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.25);
+
+const animationToShared = `
+    to {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+    }
 `;
 
-const ToastComponent = (props: ToastComponentProps<DefaultActionData>) => {
-    // TODO: support different types
-    return (<StyledToast $x={props.x} $y={props.y}>{props.data.text}</StyledToast>);
+const animations = {
+    'top': keyframes`
+        from {
+            transform: translateY(25%) scale(1);
+            opacity: 0;
+        }
+        ${animationToShared}
+    `,
+    'bottom': keyframes`
+        from {
+            transform: translateY(-25%) scale(1);
+            opacity: 0;
+        }
+        ${animationToShared}
+    `,
+    'left': keyframes`
+        from {
+            transform: translateX(25%) scale(1);
+            opacity: 0;
+        }
+        ${animationToShared}
+    `,
+    'right': keyframes`
+        from {
+            transform: translateX(-25%) scale(1);
+            opacity: 0;
+        }
+        ${animationToShared}
+    `,
 }
+
+const colorByType = {
+    'info': '#3498db',
+    'success': '#2ecc71',
+    'warning': '#fa983a',
+    'error': '#eb2f06',
+} as const;
+
+const iconSharedStyles = css`
+    pointer-events: none;
+    margin-right: 12px;
+    font-size: 24px;
+`;
+
+const SuccessIcon = styled(IoIosCheckmarkCircle)`
+    ${iconSharedStyles};
+    color: ${colorByType.success};
+`;
+
+const InfoIcon = styled(IoIosInformationCircle)`
+    ${iconSharedStyles};
+    color: ${colorByType.info};
+`;
+
+const WarningIcon = styled(RiErrorWarningFill)`
+    ${iconSharedStyles};
+    color: ${colorByType.warning};
+`;
+
+const ErrorIcon = styled(IoCloseCircleSharp)`
+    ${iconSharedStyles};
+    color: ${colorByType.error};
+`;
+
+const iconByType = {
+    'info': InfoIcon,
+    'success': SuccessIcon,
+    'warning': WarningIcon,
+    'error': ErrorIcon,
+};
+
+const ToastText = styled.span`
+    line-height: 1;
+    flex-grow: 1;
+`;
+
+const StyledToast = styled.div<{$type: DefaultActionData["type"], $state: TransitionStatus, $duration: number, $placement: ToastPlacement}>`
+    padding: 6px 12px;
+    background-color: white;
+    font-size: 14px;
+    box-shadow: 0 3px 6px -4px #0000001f, 0 6px 16px #00000014, 0 9px 28px 8px #0000000d;
+    border-radius: 3px;
+    min-width: 150px;
+    min-height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid ${({$type}) => colorByType[$type]};
+    animation: ${({$state, $duration, $placement}) => {
+        if ($state === 'entering') return css`${animations[$placement]} ${$duration}ms linear 0s 1 normal`
+        if ($state === 'exiting') return css`${animations[$placement]} ${$duration}ms linear 0s 1 reverse`;
+        return `none`;
+    }};
+`;
+
+const ToastComponent = React.forwardRef((props: ToastComponentProps<DefaultActionData>, ref: React.Ref<HTMLElement>) => {
+    const Icon = iconByType[props.data.type];
+    return (<StyledToast 
+            $type={props.data.type}
+            $placement={props.placement}
+            $state={props.animation.state} 
+            $duration={props.animation.duration} 
+            style={props.style} 
+            ref={ref as React.Ref<HTMLDivElement>}
+    >
+        <Icon />
+        <ToastText>{props.data.text}</ToastText>
+    </StyledToast>);
+});
+
+interface ShowToastOptions {
+    type?: DefaultActionData["type"], 
+    placement?: ToastPlacement
+    duration?: number,
+} 
 
 export const {Provider, Target, useCustomLocalToast} = createCustomLocalToast(ToastComponent);
 
 export const useLocalToast = () => {
-    const {addToast, removeToast, removeAllByName, removeAll} = useCustomLocalToast();
+    const {addToast, updateToast, removeToast, removeAllByName, removeAll} = useCustomLocalToast();
 
-    const showToast = (name: string, type: DefaultActionData["type"], text: DefaultActionData["text"], placement?: ToastPlacement) => {
-        return addToast(name, {
+    const showToast = (name: string, text: DefaultActionData["text"], {type = 'success', placement = DEFAULT_PLACEMENT, duration = 2500}: ShowToastOptions) => {
+        const id = addToast(name, {
             type,
             text
         }, placement);
+        if (duration > 0) {
+            setTimeout(() => removeToast(id), duration);
+        }
+        return id;
     };
 
-    return {showToast, removeToast, removeAllByName, removeAll};
+    return {showToast, updateToast, removeToast, removeAllByName, removeAll};
 };

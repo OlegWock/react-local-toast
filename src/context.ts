@@ -1,9 +1,11 @@
 import React from "react";
-import { Action, ToastPlacement, ToastComponentProps } from "./types";
+import { DEFAULT_ANIMATION_DURATION, DEFAULT_PLACEMENT } from "./const";
+import { Action, ToastPlacement, ToastComponentType } from "./types";
 
 export interface LocalToastContextType<T> {
-    Component: React.ComponentType<ToastComponentProps<T>>,
+    Component: ToastComponentType<T>,
     placement: ToastPlacement,
+    animationDuration: number,
     q: Action<T>[],
     setQ: (q: Action<T>[]) => void,
     refs: {
@@ -14,19 +16,22 @@ export interface LocalToastContextType<T> {
     removeRef: (name: string) => void,
 
     addToast: (name: string, data: T, placement?: ToastPlacement) => string,
+    updateToast: (id: string, newData: Partial<T>) => void,
     removeToast: (id: string) => void,
     removeAllByName: (name: string) => void,
     removeAll: () => void,
 }
 
-export const createContext = <T>(component: React.ComponentType<ToastComponentProps<T>>) => {
+export const createContext = <T>(component: ToastComponentType<T>): React.Context<LocalToastContextType<T>> => {
     return React.createContext<LocalToastContextType<T>>({
         Component: component,
-        placement: "top",
+        placement: DEFAULT_PLACEMENT,
+        animationDuration: DEFAULT_ANIMATION_DURATION,
         q: [],
         setQ: () => {},
         refs: {},
-        addToast: () => 'mock',
+        addToast: () => 'noop',
+        updateToast: () => {},
         removeToast: () => {},
         removeAll: () => {},
         removeAllByName: () => {},
