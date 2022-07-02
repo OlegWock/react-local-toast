@@ -6,10 +6,6 @@
 
 > Local toast helps you to provide feedback related to particular components on page
 
-## TODO:
-
-* Add classes to default toast implementation so it can be styled
-* Expose internals functions in separate `/internals` file
 
 ## Features
 

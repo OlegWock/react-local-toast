@@ -12,6 +12,7 @@ interface ToastInfo<T> {
     toastRef: { current: null | HTMLElement };
     attachRef: React.Ref<HTMLElement>;
     cachedSize: [number, number];
+    createdAt: number;
     data: T;
 }
 
@@ -21,12 +22,13 @@ export const createViewport = <T,>(context: Context<LocalToastContextType<T>>) =
             const removeMe = () => {
                 setToasts((t) => t.filter((tst) => tst.id !== toast.id));
             };
-            console.log('Rendering toast', toast);
 
             if (!toast.parentRef.current) return null;
 
             let styles: React.CSSProperties = {};
             if (toast.toastRef.current) {
+                const MARGIN = 4;
+
                 const toastRect = toast.toastRef.current.getBoundingClientRect();
                 const parentRect = toast.parentRef.current.getBoundingClientRect();
 
@@ -35,28 +37,36 @@ export const createViewport = <T,>(context: Context<LocalToastContextType<T>>) =
                 const parentEndX = parentRect.right + window.pageXOffset;
                 const parentEndY = parentRect.bottom + window.pageYOffset;
 
-                const MARGIN = 4;
+                const neighbourToasts = toasts.filter(t => {
+                    return t.parentName === toast.parentName 
+                    && t.placement === toast.placement 
+                    && t.id !== toast.id
+                    && t.createdAt < toast.createdAt;
+                });
+                const neighbourToastsHeight = neighbourToasts.reduce((height, toastDetails) => {
+                    return height + toastDetails.cachedSize[1] + MARGIN;
+                }, 0);
 
                 styles = {
                     position: 'absolute',
                 };
                 if (toast.placement === 'top') {
-                    styles.top = parentY - toastRect.height - MARGIN;
+                    styles.top = parentY - toastRect.height - MARGIN - neighbourToastsHeight;
                     styles.left = (parentX + parentEndX) / 2 - toastRect.width / 2;
                 }
 
                 if (toast.placement === 'bottom') {
-                    styles.top = parentEndY + MARGIN;
+                    styles.top = parentEndY + MARGIN + neighbourToastsHeight;
                     styles.left = (parentX + parentEndX) / 2 - toastRect.width / 2;
                 }
 
                 if (toast.placement === 'left') {
-                    styles.top = (parentY + parentEndY) / 2 - toastRect.height / 2;
+                    styles.top = (parentY + parentEndY) / 2 - toastRect.height / 2 - neighbourToastsHeight;
                     styles.left = parentX - toastRect.width - MARGIN;
                 }
 
                 if (toast.placement === 'right') {
-                    styles.top = (parentY + parentEndY) / 2 - toastRect.height / 2;
+                    styles.top = (parentY + parentEndY) / 2 - toastRect.height / 2 - neighbourToastsHeight;
                     styles.left = parentEndX + MARGIN;
                 }
             } else {
@@ -115,6 +125,7 @@ export const createViewport = <T,>(context: Context<LocalToastContextType<T>>) =
                                     ref.current = el;
                                 },
                                 data: action.descriptor.data,
+                                createdAt: Date.now(),
                             },
                         ];
                     });

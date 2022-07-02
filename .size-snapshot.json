@@ -5,21 +5,21 @@
     "gzipped": 3097
   },
   "react-local-toast.cjs.production.js": {
-    "bundled": 20306,
-    "minified": 12081,
-    "gzipped": 3351
+    "bundled": 20990,
+    "minified": 12335,
+    "gzipped": 3450
   },
   "react-local-toast.esm.js": {
-    "bundled": 18599,
-    "minified": 10693,
-    "gzipped": 3201,
+    "bundled": 19310,
+    "minified": 10971,
+    "gzipped": 3302,
     "treeshaked": {
       "rollup": {
-        "code": 2684,
+        "code": 2662,
         "import_statements": 492
       },
       "webpack": {
-        "code": 8872
+        "code": 9212
       }
     }
   },
@@ -29,9 +29,9 @@
     "gzipped": 26232
   },
   "react-local-toast.umd.production.js": {
-    "bundled": 110819,
-    "minified": 56611,
-    "gzipped": 20075
+    "bundled": 111581,
+    "minified": 56967,
+    "gzipped": 20181
   },
   "internals.js": {
     "bundled": 10559,
