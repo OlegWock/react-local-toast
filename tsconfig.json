@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.base.json",
   "exclude": ["node_modules"],
-  "include": ["scripts", "src", "test"],
+  "include": ["src"],
   "compilerOptions": {
     "allowJs": true,
     "declaration": false,

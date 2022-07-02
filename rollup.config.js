@@ -8,11 +8,9 @@ import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import { terser } from 'rollup-plugin-terser';
 import pkg from './package.json';
 
-const CJS_DEV = 'CJS_DEV';
-const CJS_PROD = 'CJS_PROD';
+const CJS = 'CJS';
 const ES = 'ES';
-const UMD_DEV = 'UMD_DEV';
-const UMD_PROD = 'UMD_PROD';
+const UMD = 'UMD';
 
 const input = './compiled/index.js';
 
@@ -22,14 +20,8 @@ const getGlobals = (bundleType) => {
         react: 'React',
     };
 
-    switch (bundleType) {
-        case UMD_DEV:
-            return { ...baseGlobals };
-        case UMD_PROD:
-            return baseGlobals;
-        default:
-            return {};
-    }
+    if (bundleType === UMD) return baseGlobals;
+    return {};
 };
 
 const getExternal = (bundleType) => {
@@ -45,19 +37,11 @@ const getExternal = (bundleType) => {
         return (id) => pattern.test(id);
     };
 
-    switch (bundleType) {
-        case CJS_DEV:
-        case CJS_PROD:
-        case ES:
-            return makeExternalPredicate([...peerDependencies, ...dependencies]);
-        case UMD_DEV:
-            return makeExternalPredicate([...peerDependencies]);
-        default:
-            return makeExternalPredicate(peerDependencies);
-    }
+    if ([CJS, ES].includes(bundleType)) return makeExternalPredicate([...peerDependencies, ...dependencies]);
+    return makeExternalPredicate(peerDependencies);
 };
 
-const isProduction = (bundleType) => bundleType === CJS_PROD || bundleType === UMD_PROD;
+const isProduction = (bundleType) => bundleType === CJS || bundleType === UMD;
 
 const getBabelConfig = (bundleType) => {
     const options = {
@@ -68,21 +52,17 @@ const getBabelConfig = (bundleType) => {
         runtimeHelpers: true,
     };
 
-    switch (bundleType) {
-        case ES:
-            return {
-                ...options,
-                plugins: [...options.plugins],
-            };
-        case UMD_PROD:
-        case CJS_PROD:
-            return {
-                ...options,
-                plugins: [...options.plugins],
-            };
-        default:
-            return options;
+    if (bundleType === ES) {
+        return {
+            ...options,
+            plugins: [...options.plugins],
+        };
     }
+
+    return {
+        ...options,
+        plugins: [...options.plugins],
+    };
 };
 
 const getPlugins = (bundleType) => [
@@ -113,16 +93,16 @@ const getPlugins = (bundleType) => [
         }),
 ];
 
-const getCjsConfig = (bundleType) => ({
+const getCjsConfig = () => ({
     input,
-    external: getExternal(bundleType),
+    external: getExternal(CJS),
     output: {
         exports: 'named',
-        file: `dist/react-local-toast.cjs.${isProduction(bundleType) ? 'production' : 'development'}.js`,
+        file: `dist/react-local-toast.cjs.production.js`,
         format: 'cjs',
         sourcemap: true,
     },
-    plugins: getPlugins(bundleType),
+    plugins: getPlugins(CJS),
 });
 
 const getEsConfig = () => ({
@@ -136,4 +116,17 @@ const getEsConfig = () => ({
     plugins: getPlugins(ES),
 });
 
-export default [getCjsConfig(CJS_DEV), getCjsConfig(CJS_PROD), getEsConfig()];
+const getUmdConfig = () => ({
+    input,
+    external: getExternal(UMD),
+    output: {
+        file: `dist/react-local-toast.umd.production.js`,
+        format: 'umd',
+        globals: getGlobals(UMD),
+        name: 'ReactLocalToast',
+        sourcemap: true,
+    },
+    plugins: getPlugins(UMD),
+});
+
+export default [getCjsConfig(), getEsConfig(), getUmdConfig()];
