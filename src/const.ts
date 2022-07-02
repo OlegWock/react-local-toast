@@ -1,4 +1,4 @@
-import { ToastPlacement } from "./types";
+import { ToastPlacement } from './types';
 
 export const DEFAULT_ANIMATION_DURATION = 80;
 
