@@ -1,13 +1,17 @@
 {
   "name": "react-local-toast",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Local toast helps you to provide feedback related to particular components on page",
   "main": "dist/index.js",
   "module": "dist/react-local-toast.esm.js",
   "jsnext:main": "dist/react-local-toast.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "!dist/react-local-toast.umd.development.js",
+    "!dist/react-local-toast.umd.development.js.map",
+    "!dist/react-local-toast.umd.production.js",
+    "!dist/react-local-toast.umd.production.js.map"
   ],
   "scripts": {
     "build": "run-s clean compile bundle",
