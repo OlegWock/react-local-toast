@@ -45,11 +45,13 @@ export const createViewport = <T,>(context: Context<LocalToastContextType<T>>) =
                 const parentEndX = parentRect.right + window.pageXOffset;
                 const parentEndY = parentRect.bottom + window.pageYOffset;
 
-                const neighbourToasts = toasts.filter(t => {
-                    return t.parentName === toast.parentName 
-                    && t.placement === toast.placement 
-                    && t.id !== toast.id
-                    && t.createdAt < toast.createdAt;
+                const neighbourToasts = toasts.filter((t) => {
+                    return (
+                        t.parentName === toast.parentName &&
+                        t.placement === toast.placement &&
+                        t.id !== toast.id &&
+                        t.createdAt < toast.createdAt
+                    );
                 });
                 const neighbourToastsHeight = neighbourToasts.reduce((height, toastDetails) => {
                     return height + toastDetails.cachedSize[1] + MARGIN;

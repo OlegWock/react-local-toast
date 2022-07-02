@@ -125,7 +125,7 @@ const StyledToast = styled.div<{
     min-width: 150px;
     min-height: 30px;
     display: flex;
-    ${({$disableTransition}) => $disableTransition ? '' : 'transition: 0.1s linear;'}
+    ${({ $disableTransition }) => ($disableTransition ? '' : 'transition: 0.1s linear;')}
     justify-content: center;
     align-items: center;
     border: 2px solid ${({ $type }) => colorByType[$type]};

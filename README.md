@@ -27,6 +27,16 @@ npm install react-local-toast --save
 yarn add react-local-toast
 ```
 
+There are also UMD builds available via [unpkg](https://unpkg.com/). I didn't test them though. So if you have any problems with them please let me know
+
+- https://unpkg.com/react-local-toast/dist/react-local-toast.umd.development.js
+- https://unpkg.com/react-local-toast/dist/react-local-toast.umd.production.js
+
+Make sure you have already included:
+
+- [`React`](https://unpkg.com/react/umd/react.development.js)
+- [`ReactDOM`](https://unpkg.com/react-dom/umd/react-dom.development.js)
+
 ## Basic Usage
 
 For starters, you need to wrap your application in `LocalToastProvider`. 
@@ -60,7 +70,7 @@ export const App = () => {
 };
 ```
 
-Local toast uses refs to calculate position of component, so in case you want to use toasts with functional components -- make sure they are wrapped in `React.forwardRef`.
+Local toast uses refs to calculate position of component, so in case you want to use toasts with functional components – make sure they are wrapped in `React.forwardRef`.
 
 And final piece! Update your component to actually produce local toasts:
 
@@ -98,21 +108,14 @@ Cool, huh?
 
 For minor adjustments you can use write custom CSS. Default toast component exposes several classes, see details in file [default-implementation.tsx](src/default-implementation.tsx#L161-L166).
 
-`LocalToastProvider` accepts prop `Component`, you can supply your component which will be used as toast. To see which props available to use in component, refer to [default Toast implementation](https://github.com/OlegWock/react-local-toast/blob/master/src/toast.tsx#L5-L9).
+For more complex cases: `LocalToastProvider` accepts `Component` prop, you can supply your component which will be used as toast. To see which props available to use in component, refer to API reference.
 
 ```jsx
 import React from 'react';
 import { LocalToastProvider } from 'react-local-toast';
 
-const MyToast = ({x, y, data}) => {
-    return (<div style={{
-        position: 'absolute',
-        top: y, 
-        left: x, 
-        background: '#333', 
-        color: 'white'
-        padding: 8,
-    }}>{data.text}</div>);
+const MyToast = ({style, data}) => {
+    return (<div style={style}>Very important message: {data.text}</div>);
 };
 
 export default () => {
@@ -132,14 +135,12 @@ import React from 'react';
 import { LocalToastTarget, useLocalToast } from 'react-local-toast';
 
 export const App = () => {
-    const showJsxToast = () => {
-        const toastId = showToast('btn', (<div>
-            This looks kinda hacky, but I guess it's fine for one-time trick. 
-            <button onClick={() => hideToast(toastId)}>Dismiss</button>
-        </div>));
-    };
+    const toastId = showToast('btn', (<div>
+        This looks kinda hacky, but I guess it's fine for one-time trick. 
+        <button onClick={() => removeToast(toastId)}>Dismiss</button>
+    </div>), {type: 'success', duration: 0});
 
-    const {showToast, hideToast} = useLocalToast();
+    const {showToast, removeToast} = useLocalToast();
 
     return (<div>
         <p>This component should be inside LocalToastProvider</p>
@@ -150,25 +151,14 @@ export const App = () => {
 };
 ```
 
-
 If you want to add 'Dismiss' button to all toasts, you could use `Component` prop of `LocalToastProvider`. Your custom component will receive `removeMe` prop which can be used to dissmiss toast. Like this:
 
 ```jsx
 import React from 'react';
 import { LocalToastProvider } from 'react-local-toast';
 
-const MyToast = ({x, y, data, removeMe}) => {
-    return (<div style={{
-        position: 'absolute',
-        top: y, 
-        left: x, 
-        background: '#333', 
-        color: 'white'
-        padding: 8,
-    }}>
-        {data.text}
-        <button onClick={() => removeMe()}>Dismiss</button>    
-    </div>);
+const MyToast = ({style, data, removeMe}) => {
+    return (<div style={style}>Very important message: {data.text} <button onClick={() => removeMe()}>Dismiss</button></div>);
 };
 
 export default () => {
@@ -181,11 +171,11 @@ export default () => {
 
 If you need even finer control over toasts, you could provide your custom implementation. Do not be scared, it's not that hard.
 
-When this might be handy? When default implementation isn't enough for you obviously. E.g. you need to pass a lot more data that standart `type` and `text`. Maybe you want to have both `title` and `message` for toast? Or custom `loading` type? You're in the right place of documentation, friend.
+When this might be handy? When default implementation isn't enough for you obviously. E.g. you need to pass a lot more data that standart `type` and `text`. Maybe you want to have both `title` and `message` for toast? Or custom `confirm` type with buttons? You're in the right place of documentation, friend.
 
 To provide custom implementation:
 
-1. Create typing for your data (only if you use TypeScript). This data will be passed to your toast component.
+1. Create typing for your data (only if you use TypeScript). This data will be passed from hook call to your toast component.
 
 ```typescript
 interface MyToastData {
@@ -195,24 +185,16 @@ interface MyToastData {
 }
 ```
 
-2. Implement your Toast component. It should accept props of type `ToastComponentProps<T>` where `T` is your data type. Again, if you're using good old JavaScript, you can skip all this typing stuff, just implement Toast!
+2. Implement your Toast component. It should accept props of type [`ToastComponentProps<T>`](src/types.ts#L22-L30) where `T` is your data type. Again, if you're using good old JavaScript, you can skip all this typing stuff, just implement Toast!
 
 ```tsx
 const MyToast = (props: ToastComponentProps<MyToastData>) => {
-    const {x, y, title, message, dissmissable, removeMe} = props;
-    const styles = {
-        position: 'absolute',
-        top: y, 
-        left: x, 
-        background: '#333', 
-        color: 'white'
-        padding: 8,
-    };
+    const {style, data} = props;
 
-    return (<div style={styles}>
-        <h2>{title}</h2>
-        <p>{message}</p>
-        {dissmissable && <button onClick={() => removeMe()}>OK!</button>}
+    return (<div style={style}>
+        <h2>{data.title}</h2>
+        <p>{data.message}</p>
+        {data.dissmissable && <button onClick={() => removeMe()}>OK!</button>}
     </div>);
 };
 ```
@@ -253,33 +235,83 @@ export const useMyLocalToast = () => {
 
 ## API
 
+Properties in **bold** are required, other are optionsl
+
 ### `LocalToastProvider`
 
-TODO: write this section
+| Property | Type | Default | Description |
+-------------------------------------------
+| `Component` | React component | `ToastComponent` | Component used to display toasts |
+| `animationDuration` | number (ms) | `80` | Self explanatory |
+| `defaultPlacement` | `'top' | 'right' | 'bottom' | 'left'` | `top` | This might be set on per-toast basis too |
+| `` | x | x | x |
+
 
 ### `LocalToastTarget`
 
-TODO: rename this component
+| Property | Type | Default | Description |
+-------------------------------------------
+| **`name`** | string | - | This should be unique string used to identify toast target |
+| **`children`** | React element | - | Lib uses refs to track toast targets, so make sure your child component accept props |
 
 ### `useLocalToast`
 
-TODO: write this section
+Calling this hook will return an object with bunch of functions in it. Let's take a closer look on each. Here and farther `name` refers to local toast target name and `id` to toast id. 
+
+```ts
+// toastId can be used in remove or update functions
+const toastId = showToast(name: string, text: string, options: {
+    type?: 'info' | 'success' | 'warning' | 'error' | 'loading',  // Default 'success'
+    placement?: ToastPlacement, // Default 'top'
+    duration?: number, // Default 2500ms
+})
+```
+
+To update toast you call `updateToast` function. You can update only toast data. So, for default implementation it's only `type` and `text`. You can't update placement for example.
+
+```ts
+updateToast(toastId, {
+    type: 'success',
+    text: 'Successfully downloaded!'
+});
+
+// Partial updated supported too
+updateToast(toastId, {
+    text: 'Successfully downloaded!'
+});
+```
+
+To remove one or multiple toasts you call either `removeToast`, `removeAllByName` or `removeAll`.
+
+```ts
+// To remove one toast:
+removeToast(toastId);
+// To remove all toasts from target
+removeAllByName(targetName);
+// Remove all toasts on page
+removeAll();
+```
+
 
 ### `useCustomLocalToast`
 
-TODO: write this section (will be used to write your own hooks with custom api)
+This function accepts your `ToastComponent` and creates context and all neccessary pieces to make your custom implementation work under hood. It returns:
+* `Provider` – provider to wrap your application in.
+* `Target` – target to wrap your components for which you want to display toasts.
+* `useCustomLocalToast` – hook that provides access to create/update/remove functions.
 
-## Installation
+While `useCustomLocalToast` might be used as is, I'd recommend to wrap in into other hook with API, that better reflects your needs and application specifics. You can see example in [default-implementation.tsx](src/default-implementation.tsx#L194-211) where we create our own `showFunction` instead of using `addToast` provided by parent hook.
 
-There are also UMD builds available via [unpkg](https://unpkg.com/). I didn't test them though. So if you have any problems with them please let me know
+So, `useCustomLocalToast` returns these function:
 
-- https://unpkg.com/react-local-toast/dist/react-local-toast.umd.development.js
-- https://unpkg.com/react-local-toast/dist/react-local-toast.umd.production.js
-
-Make sure you have already included:
-
-- [`React`](https://unpkg.com/react/umd/react.development.js)
-- [`ReactDOM`](https://unpkg.com/react-dom/umd/react-dom.development.js)
+```ts
+// Here T refers to your toast data type
+addToast(name: string, data: T, placement?: ToastPlacement) => string; // returns toast id
+updateToast(id: string, newData: Partial<T>) => void;
+removeToast(id: string) => void;
+removeAllByName(name: string) => void;
+removeAll() => void;
+```
 
 
 ## License
