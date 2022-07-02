@@ -12,6 +12,7 @@ interface ToastInfo<T> {
     toastRef: { current: null | HTMLElement };
     attachRef: React.Ref<HTMLElement>;
     cachedSize: [number, number];
+    changedSizeRecently: boolean;
     createdAt: number;
     data: T;
 }
@@ -26,7 +27,14 @@ export const createViewport = <T,>(context: Context<LocalToastContextType<T>>) =
             if (!toast.parentRef.current) return null;
 
             let styles: React.CSSProperties = {};
+            let disableTransitions = false;
+
             if (toast.toastRef.current) {
+                if (toast.changedSizeRecently) {
+                    disableTransitions = true;
+                    // We don't need this to trigger re-render
+                    toast.changedSizeRecently = false;
+                }
                 const MARGIN = 4;
 
                 const toastRect = toast.toastRef.current.getBoundingClientRect();
@@ -72,9 +80,10 @@ export const createViewport = <T,>(context: Context<LocalToastContextType<T>>) =
             } else {
                 // First paint
                 // Draw offscreen to esimate tooltip size on next render
+                disableTransitions = true;
                 styles = {
                     position: 'absolute',
-                    left: '-10000px',
+                    left: '-1000px',
                 };
             }
 
@@ -83,7 +92,7 @@ export const createViewport = <T,>(context: Context<LocalToastContextType<T>>) =
                     {(state) => (
                         <Component
                             placement={toast.placement}
-                            animation={{ state, duration: animationDuration }}
+                            animation={{ state, duration: animationDuration, disableTransitions }}
                             style={styles}
                             id={toast.id}
                             removeMe={removeMe}
@@ -99,6 +108,7 @@ export const createViewport = <T,>(context: Context<LocalToastContextType<T>>) =
         // Document is unavailable in Next.js SSR, so postpone actual rendering of portal
         const ref = React.useRef<HTMLElement>();
         const [mounted, setMounted] = React.useState(false);
+
         React.useEffect(() => {
             ref.current = document.body;
             setMounted(true);
@@ -121,6 +131,7 @@ export const createViewport = <T,>(context: Context<LocalToastContextType<T>>) =
                                 parentRef: action.descriptor.ref,
                                 toastRef: ref,
                                 cachedSize: [0, 0],
+                                changedSizeRecently: false,
                                 attachRef: (el) => {
                                     ref.current = el;
                                 },
@@ -173,6 +184,7 @@ export const createViewport = <T,>(context: Context<LocalToastContextType<T>>) =
                             return {
                                 ...t,
                                 cachedSize: newSizes[t.id],
+                                changedSizeRecently: true,
                             };
                         }
                         return t;

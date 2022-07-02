@@ -177,7 +177,7 @@ export default () => {
 };
 ```
 
-If you need even finer control over toasts, you could provide your custom implementation. Do not be scared, it's not that hard. Actually, default implementation (which you saw in examples above) fits into single file.
+If you need even finer control over toasts, you could provide your custom implementation. Do not be scared, it's not that hard.
 
 When this might be handy? When default implementation isn't enough for you obviously. E.g. you need to pass a lot more data that standart `type` and `text`. Maybe you want to have both `title` and `message` for toast? Or custom `loading` type? You're in the right place of documentation, friend.
 

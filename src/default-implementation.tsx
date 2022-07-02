@@ -115,8 +115,8 @@ const StyledToast = styled.div<{
     $state: TransitionStatus;
     $duration: number;
     $placement: ToastPlacement;
+    $disableTransition: boolean;
 }>`
-    --start-angle: 0deg;
     padding: 6px 12px;
     background-color: white;
     font-size: 14px;
@@ -125,6 +125,7 @@ const StyledToast = styled.div<{
     min-width: 150px;
     min-height: 30px;
     display: flex;
+    ${({$disableTransition}) => $disableTransition ? '' : 'transition: 0.1s linear;'}
     justify-content: center;
     align-items: center;
     border: 2px solid ${({ $type }) => colorByType[$type]};
@@ -144,6 +145,15 @@ const StyledToast = styled.div<{
 
 const ToastComponent = React.forwardRef(
     (props: ToastComponentProps<DefaultActionData>, ref: React.Ref<HTMLElement>) => {
+        // If you enable transition and change elements position in same tick -- position change will be animated.
+        // This codes delays enabling transition by one render
+        const [disableTransitions, setDisableTransitions] = React.useState(props.animation.disableTransitions);
+        React.useEffect(() => {
+            if (props.animation.disableTransitions !== disableTransitions) {
+                setDisableTransitions(props.animation.disableTransitions);
+            }
+        });
+
         const Icon = iconByType[props.data.type];
         return (
             <StyledToast
@@ -153,11 +163,13 @@ const ToastComponent = React.forwardRef(
                     'react-local-toast-persistent': props.animation.duration === 0,
                     [`react-local-toast-${props.animation.state}`]: true,
                     [`react-local-toast-${props.placement}`]: true,
+                    'react-local-toast-offscreen': props.animation.disableTransitions,
                 })}
                 $type={props.data.type}
                 $placement={props.placement}
                 $state={props.animation.state}
                 $duration={props.animation.duration}
+                $disableTransition={props.animation.disableTransitions || disableTransitions}
                 style={props.style}
                 ref={ref as React.Ref<HTMLDivElement>}
             >

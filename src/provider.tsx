@@ -91,7 +91,6 @@ export const createProvider = <T,>(
         };
 
         const removeAllByName = (name: string) => {
-            console.log('Hiding toast', name);
             dispatchAction({
                 type: 'removeAllByName',
                 name,

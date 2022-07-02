@@ -16,6 +16,7 @@ type ToastDescriptor<T> = {
 type ToastAnimationProps = {
     state: TransitionStatus;
     duration: number;
+    disableTransitions: boolean;
 };
 
 export type ToastComponentProps<T> = {
