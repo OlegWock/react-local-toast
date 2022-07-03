@@ -165,7 +165,7 @@ const ToastComponent = React.forwardRef(
                     'react-local-toast-persistent': props.animation.duration === 0,
                     [`react-local-toast-${props.animation.state}`]: true,
                     [`react-local-toast-${props.placement}`]: true,
-                    'react-local-toast-offscreen': props.animation.disableTransitions,
+                    'react-local-toast-disable-transitions': props.animation.disableTransitions,
                 })}
                 $type={props.data.type}
                 $placement={props.placement}
