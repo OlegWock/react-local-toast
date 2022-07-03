@@ -120,6 +120,7 @@ const StyledToast = styled.div<{
     padding: 6px 12px;
     z-index: 9999;
     background-color: white;
+    color: #333;
     font-size: 14px;
     box-shadow: 0 3px 6px -4px #0000001f, 0 6px 16px #00000014, 0 9px 28px 8px #0000000d;
     border-radius: 3px;
