@@ -118,6 +118,7 @@ const StyledToast = styled.div<{
     $disableTransition: boolean;
 }>`
     padding: 6px 12px;
+    z-index: 9999;
     background-color: white;
     font-size: 14px;
     box-shadow: 0 3px 6px -4px #0000001f, 0 6px 16px #00000014, 0 9px 28px 8px #0000000d;
@@ -194,8 +195,10 @@ export const useLocalToast = () => {
     const showToast = (
         name: string,
         text: DefaultActionData['text'],
-        { type = 'success', placement = DEFAULT_PLACEMENT, duration = 2500 }: ShowToastOptions
+        options?: ShowToastOptions
     ) => {
+        const { type = 'success', placement = DEFAULT_PLACEMENT, duration = 2500 } = (options || {});
+
         const id = addToast(
             name,
             {
@@ -209,6 +212,7 @@ export const useLocalToast = () => {
         }
         return id;
     };
+
 
     return { showToast, updateToast, removeToast, removeAllByName, removeAll };
 };
