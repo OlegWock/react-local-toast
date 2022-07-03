@@ -198,7 +198,6 @@ export const createViewport = <T,>(context: Context<LocalToastContextType<T>>) =
         if (!mounted) return null;
         return ReactDOM.createPortal(
             <>
-                <div>I'm viewport</div>
                 <TransitionGroup component={null}>{toasts.map(renderToast)}</TransitionGroup>
             </>,
             ref.current!
