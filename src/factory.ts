@@ -9,7 +9,7 @@ interface CreateCustomLocalToastResult<T> {
     Target: LocalToastTargetType;
     useCustomLocalToast: () => Pick<
         LocalToastContextType<T>,
-        'addToast' | 'updateToast' | 'removeToast' | 'removeAllByName' | 'removeAll'
+        'addToast' | 'updateToast' | 'removeToast' | 'removeAllToastsByName' | 'removeAllToasts'
     >;
 }
 
@@ -19,8 +19,8 @@ export const createCustomLocalToast = <T>(component: ToastComponentType<T>): Cre
     const Target = createTarget(Context);
 
     const useCustomLocalToast = () => {
-        const { addToast, updateToast, removeToast, removeAllByName, removeAll } = React.useContext(Context);
-        return { addToast, updateToast, removeToast, removeAllByName, removeAll };
+        const { addToast, updateToast, removeToast, removeAllToastsByName, removeAllToasts } = React.useContext(Context);
+        return { addToast, updateToast, removeToast, removeAllToastsByName, removeAllToasts };
     };
 
     return { Provider, Target, useCustomLocalToast };

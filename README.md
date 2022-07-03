@@ -103,15 +103,15 @@ Cool, huh?
 
 For minor adjustments you can use write custom CSS. Default toast component exposes several classes, see details in file [default-implementation.tsx](src/default-implementation.tsx#L161-L166).
 
-For more complex cases: `LocalToastProvider` accepts `Component` prop, you can supply your component which will be used as toast. To see which props available to use in component, refer to API reference.
+For more complex cases: `LocalToastProvider` accepts `Component` prop, you can supply your component which will be used as toast. Component should accept ref (so, use `React.forwardRef`), this used to measure component size and positon it relative to parent. To see which props available to use in component, refer to API reference.
 
 ```jsx
 import React from 'react';
 import { LocalToastProvider } from 'react-local-toast';
 
-const MyToast = ({style, data}) => {
-    return (<div style={style}>Very important message: {data.text}</div>);
-};
+const MyToast = React.forwardRef({style, data}, ref) => {
+    return (<div style={style} ref={ref}>Very important message: {data.text}</div>);
+});
 
 export default () => {
     return (<LocalToastProvider Component={MyToast}>
@@ -154,9 +154,9 @@ If you want to add 'Dismiss' button to all toasts, you could use `Component` pro
 import React from 'react';
 import { LocalToastProvider } from 'react-local-toast';
 
-const MyToast = ({style, data, removeMe}) => {
-    return (<div style={style}>Very important message: {data.text} <button onClick={() => removeMe()}>Dismiss</button></div>);
-};
+const MyToast = React.forwardRef({style, data, removeMe}, ref) => {
+    return (<div style={style} ref={ref}>Very important message: {data.text} <button onClick={() => removeMe()}>Dismiss</button></div>);
+});
 
 export default () => {
     return (<LocalToastProvider Component={MyToast}>

@@ -191,7 +191,7 @@ interface ShowToastOptions {
 export const { Provider, Target, useCustomLocalToast } = createCustomLocalToast(ToastComponent);
 
 export const useLocalToast = () => {
-    const { addToast, updateToast, removeToast, removeAllByName, removeAll } = useCustomLocalToast();
+    const { addToast, updateToast, removeToast, removeAllToastsByName, removeAllToasts } = useCustomLocalToast();
 
     const showToast = (
         name: string,
@@ -215,5 +215,5 @@ export const useLocalToast = () => {
     };
 
 
-    return { showToast, updateToast, removeToast, removeAllByName, removeAll };
+    return { showToast, updateToast, removeToast, removeAllToastsByName, removeAllToasts };
 };

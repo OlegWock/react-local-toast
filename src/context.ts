@@ -19,8 +19,8 @@ export interface LocalToastContextType<T> {
     updateToast: (id: string, newData: Partial<T>) => void;
     removeToast: (id: string) => void;
     // TODO: Probably need to change names of these to include word 'toast'
-    removeAllByName: (name: string) => void;
-    removeAll: () => void;
+    removeAllToastsByName: (name: string) => void;
+    removeAllToasts: () => void;
 }
 
 export const createContext = <T>(component: ToastComponentType<T>): React.Context<LocalToastContextType<T>> => {
@@ -34,8 +34,8 @@ export const createContext = <T>(component: ToastComponentType<T>): React.Contex
         addToast: () => 'noop',
         updateToast: () => {},
         removeToast: () => {},
-        removeAll: () => {},
-        removeAllByName: () => {},
+        removeAllToasts: () => {},
+        removeAllToastsByName: () => {},
         registerRef: () => {},
         removeRef: () => {},
     });

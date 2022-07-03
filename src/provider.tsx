@@ -90,14 +90,14 @@ export const createProvider = <T,>(
             });
         };
 
-        const removeAllByName = (name: string) => {
+        const removeAllToastsByName = (name: string) => {
             dispatchAction({
                 type: 'removeAllByName',
                 name,
             });
         };
 
-        const removeAll = () => {
+        const removeAllToasts = () => {
             dispatchAction({
                 type: 'removeAll',
             });
@@ -117,8 +117,8 @@ export const createProvider = <T,>(
                     addToast,
                     updateToast,
                     removeToast,
-                    removeAllByName,
-                    removeAll,
+                    removeAllToastsByName,
+                    removeAllToasts,
                 }}
             >
                 {children}
