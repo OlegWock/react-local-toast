@@ -18,6 +18,7 @@ export interface LocalToastContextType<T> {
     addToast: (name: string, data: T, placement?: ToastPlacement) => string;
     updateToast: (id: string, newData: Partial<T>) => void;
     removeToast: (id: string) => void;
+    // TODO: Probably need to change names of these to include word 'toast'
     removeAllByName: (name: string) => void;
     removeAll: () => void;
 }

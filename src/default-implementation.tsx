@@ -7,7 +7,7 @@ import { RiErrorWarningFill } from 'react-icons/ri';
 import { AiOutlineLoading } from 'react-icons/ai';
 import { TransitionStatus } from 'react-transition-group';
 import { createCustomLocalToast } from './factory';
-import { DefaultActionData, ToastPlacement, ToastComponentProps } from './types';
+import { DefaultToastData, ToastPlacement, ToastComponentProps } from './types';
 import { DEFAULT_PLACEMENT } from './const';
 
 const animationToShared = `
@@ -111,7 +111,7 @@ const ToastText = styled.span`
 `;
 
 const StyledToast = styled.div<{
-    $type: DefaultActionData['type'];
+    $type: DefaultToastData['type'];
     $state: TransitionStatus;
     $duration: number;
     $placement: ToastPlacement;
@@ -146,7 +146,7 @@ const StyledToast = styled.div<{
 `;
 
 const ToastComponent = React.forwardRef(
-    (props: ToastComponentProps<DefaultActionData>, ref: React.Ref<HTMLElement>) => {
+    (props: ToastComponentProps<DefaultToastData>, ref: React.Ref<HTMLElement>) => {
         // If you enable transition and change elements position in same tick -- position change will be animated.
         // This codes delays enabling transition by one render
         const [disableTransitions, setDisableTransitions] = React.useState(props.animation.disableTransitions);
@@ -183,7 +183,7 @@ const ToastComponent = React.forwardRef(
 );
 
 interface ShowToastOptions {
-    type?: DefaultActionData['type'];
+    type?: DefaultToastData['type'];
     placement?: ToastPlacement;
     duration?: number;
 }
@@ -195,7 +195,7 @@ export const useLocalToast = () => {
 
     const showToast = (
         name: string,
-        text: DefaultActionData['text'],
+        text: DefaultToastData['text'],
         options?: ShowToastOptions
     ) => {
         const { type = 'success', placement = DEFAULT_PLACEMENT, duration = 2500 } = (options || {});

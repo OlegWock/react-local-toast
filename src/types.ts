@@ -58,11 +58,11 @@ interface ActionRemoveAll {
 
 export type Action<T> = ActionCreate<T> | ActionUpdate<T> | ActionRemove | ActionRemoveAllByName | ActionRemoveAll;
 
-export interface DefaultActionData {
+export interface DefaultToastData {
     text: string;
     type: 'info' | 'success' | 'warning' | 'error' | 'loading';
 }
 
-export type DefaultToastData = ToastComponentProps<DefaultActionData>;
+export type DefaultToastComponentProps = ToastComponentProps<DefaultToastData>;
 
-export type DefaultAction = Action<DefaultActionData>;
+export type DefaultAction = Action<DefaultToastData>;
