@@ -30,16 +30,6 @@ npm install react-local-toast --save
 yarn add react-local-toast
 ```
 
-There are also UMD builds available via [unpkg](https://unpkg.com/). I didn't test them though. So if you have any problems with them please let me know
-
-- https://unpkg.com/react-local-toast/dist/react-local-toast.umd.development.js
-- https://unpkg.com/react-local-toast/dist/react-local-toast.umd.production.js
-
-Make sure you have already included:
-
-- [`React`](https://unpkg.com/react/umd/react.development.js)
-- [`ReactDOM`](https://unpkg.com/react-dom/umd/react-dom.development.js)
-
 ## Basic Usage
 
 For starters, you need to wrap your application in `LocalToastProvider`. 
