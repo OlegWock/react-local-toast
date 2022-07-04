@@ -5,9 +5,9 @@
 
 > Local toast helps you to provide feedback related to particular components on page
 
-<div align="center">
-![Demo](/demo.gif)
-</div>
+<p align="center">
+  <img src="./demo.gif" alt="Demo">
+</p>
 
 
 
@@ -20,6 +20,7 @@
 * Multiple toasts stucks **vertically** (even if displayed on left or right side).
 * `info`, `success`, `warning`, `error` and `loading` toasts out of the box.
 * You can bring your own design. Or your own Toast component. Or your custom implementation of toasts.
+* WAI-ARIA support. 
 * TypeScript!
 
 
