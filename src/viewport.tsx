@@ -17,6 +17,20 @@ interface ToastInfo<T> {
     data: T;
 }
 
+// Source: https://stackoverflow.com/questions/19014250/rerender-view-on-browser-resize-with-react
+const useWindowSize = () => {
+    const [size, setSize] = React.useState([0, 0]);
+    React.useLayoutEffect(() => {
+        const updateSize = () => {
+            setSize([window.innerWidth, window.innerHeight]);
+        }
+        window.addEventListener('resize', updateSize);
+        updateSize();
+        return () => window.removeEventListener('resize', updateSize);
+    }, []);
+    return size;
+};
+
 export const createViewport = <T,>(context: Context<LocalToastContextType<T>>) => {
     return () => {
         const renderToast = (toast: ToastInfo<T>) => {
@@ -79,9 +93,12 @@ export const createViewport = <T,>(context: Context<LocalToastContextType<T>>) =
                     styles.top = (parentY + parentEndY) / 2 - toastRect.height / 2 - neighbourToastsHeight;
                     styles.left = parentEndX + MARGIN;
                 }
+
+                if (styles.left && styles.left < 0) styles.left = MARGIN;
+                if (styles.left && ((styles.left as number) + toastRect.width) > document.body.scrollWidth) styles.left = document.body.scrollWidth - toastRect.width - MARGIN;
             } else {
                 // First paint
-                // Draw offscreen to esimate tooltip size on next render
+                // Draw offscreen to estimate tooltip size on next render
                 disableTransitions = true;
                 styles = {
                     position: 'absolute',
@@ -110,6 +127,9 @@ export const createViewport = <T,>(context: Context<LocalToastContextType<T>>) =
         // Document is unavailable in Next.js SSR, so postpone actual rendering of portal
         const ref = React.useRef<HTMLElement>();
         const [mounted, setMounted] = React.useState(false);
+
+        // We don't really need window size, but we need to re-render once window size changes
+        const [width, height] = useWindowSize();
 
         React.useEffect(() => {
             ref.current = document.body;

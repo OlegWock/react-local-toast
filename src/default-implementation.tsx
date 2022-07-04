@@ -125,6 +125,7 @@ const StyledToast = styled.div<{
     box-shadow: 0 3px 6px -4px #0000001f, 0 6px 16px #00000014, 0 9px 28px 8px #0000000d;
     border-radius: 3px;
     min-width: 150px;
+    max-width: min(300px, calc(80vw - 8px));
     min-height: 30px;
     display: flex;
     ${({ $disableTransition }) => ($disableTransition ? '' : 'transition: 0.1s linear;')}
@@ -155,7 +156,8 @@ const ToastComponent = React.forwardRef(
                 setDisableTransitions(props.animation.disableTransitions);
             }
         });
-
+        
+        const contentIsText = ['string', 'number'].includes(typeof props.data.text);
         const Icon = iconByType[props.data.type];
         return (
             <StyledToast
@@ -174,9 +176,11 @@ const ToastComponent = React.forwardRef(
                 $disableTransition={props.animation.disableTransitions || disableTransitions}
                 style={props.style}
                 ref={ref as React.Ref<HTMLDivElement>}
+                role="presentation"
+                tabIndex={contentIsText ? -1 : 0}
             >
-                <Icon className="react-local-toast-icon" />
-                <ToastText className="react-local-toast-text">{props.data.text}</ToastText>
+                <Icon className="react-local-toast-icon" aria-hidden="true" />
+                <ToastText role={['warning', 'error'].includes(props.data.type) ?  'alert' : 'status'} aria-atomic="true" aria-live={['warning', 'error'].includes(props.data.type) ? 'assertive' : 'polite'} className="react-local-toast-text">{props.data.text}</ToastText>
             </StyledToast>
         );
     }

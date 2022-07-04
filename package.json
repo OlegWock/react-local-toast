@@ -1,6 +1,6 @@
 {
   "name": "react-local-toast",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Local toast helps you to provide feedback related to particular components on page",
   "main": "dist/index.js",
   "module": "dist/react-local-toast.esm.js",
@@ -41,7 +41,7 @@
   "bugs": {
     "url": "github:OlegWock/react-local-toast/issues"
   },
-  "homepage": "github:OlegWock/react-local-toast",
+  "homepage": "https://react-local-toast.netlify.app/",
   "peerDependencies": {
     "react": ">=17.0.2",
     "react-dom": ">=17.0.2"
