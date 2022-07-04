@@ -5,7 +5,10 @@
 
 > Local toast helps you to provide feedback related to particular components on page
 
+<div align="center">
 ![Demo](/demo.gif)
+</div>
+
 
 
 ## Features
