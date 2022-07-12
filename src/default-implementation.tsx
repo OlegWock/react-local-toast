@@ -9,6 +9,7 @@ import { TransitionStatus } from 'react-transition-group';
 import { createCustomLocalToast } from './factory';
 import { DefaultToastData, ToastPlacement, ToastComponentProps } from './types';
 import { DEFAULT_PLACEMENT } from './const';
+import { createHocFromHook } from './hoc';
 
 const animationToShared = `
     to {
@@ -221,3 +222,7 @@ export const useLocalToast = () => {
 
     return { showToast, updateToast, removeToast, removeAllToastsByName, removeAllToasts };
 };
+
+export const withLocalToast = createHocFromHook(useLocalToast);
+
+export type LocalToastHocProps = typeof useLocalToast extends () => infer R ? R : never;

@@ -91,6 +91,32 @@ export const App = () => {
 };
 ```
 
+In case you need to show toast from class component, you can use HOC like this:
+
+```tsx
+import { LocalToastTarget, withLocalToast, LocalToastHocProps } from 'react-local-toast';
+
+interface Props extends LocalToastHocProps {
+    name: string
+}
+
+class ClassComp extends React.Component<Props, any> {
+    sayHello = () => {
+        this.props.showToast('class_comp', `Hello, ${this.props.name}!`)
+    };
+    render() {
+        return (<div>
+            <LocalToastTarget name='class_comp'>
+                <button onClick={sayHello}>Say hello</button>
+            </LocalToastTarget>
+        </div>);
+    }
+}
+
+// And later use thic component as you usually do
+export default withLocalToast(ClassComp);
+```
+
 Cool, huh?
 
 ## License

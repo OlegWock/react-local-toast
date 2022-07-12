@@ -1,37 +1,37 @@
 {
   "react-local-toast.cjs.development.js": {
-    "bundled": 23062,
-    "minified": 13452,
-    "gzipped": 3779
+    "bundled": 24357,
+    "minified": 14117,
+    "gzipped": 3888
   },
   "react-local-toast.cjs.production.js": {
-    "bundled": 23062,
-    "minified": 13452,
-    "gzipped": 3779
+    "bundled": 24357,
+    "minified": 14117,
+    "gzipped": 3888
   },
   "react-local-toast.esm.js": {
-    "bundled": 21322,
-    "minified": 12037,
-    "gzipped": 3624,
+    "bundled": 22503,
+    "minified": 12596,
+    "gzipped": 3724,
     "treeshaked": {
       "rollup": {
         "code": 2802,
         "import_statements": 492
       },
       "webpack": {
-        "code": 9052
+        "code": 11088
       }
     }
   },
   "react-local-toast.umd.development.js": {
-    "bundled": 179022,
-    "minified": 78083,
-    "gzipped": 27209
+    "bundled": 180421,
+    "minified": 78584,
+    "gzipped": 27349
   },
   "react-local-toast.umd.production.js": {
-    "bundled": 113825,
-    "minified": 58022,
-    "gzipped": 20554
+    "bundled": 115224,
+    "minified": 58523,
+    "gzipped": 20704
   },
   "internals.js": {
     "bundled": 10559,
