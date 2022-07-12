@@ -38,7 +38,17 @@ yarn add react-local-toast
 
 ## Basic Usage
 
-For starters, you need to wrap your application in `LocalToastProvider`. 
+react-local-toast doesn't automatically inject its styles into DOM, you need to do that. In most cases it will be just:
+
+```js
+import 'react-local-toast/dist/bundle.css';
+// There is minified version too!
+import 'react-local-toast/dist/bundle.min.css';
+```
+
+This should work fine for most of tools (Create React App included). For more specific use cases (e.g. using toasts in Shadow DOM) you might want to inject styles manually.
+
+Now you need to wrap your application in `LocalToastProvider`. 
 
 ```jsx
 import React from 'react';
