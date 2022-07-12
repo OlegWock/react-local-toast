@@ -1,3 +1,4 @@
+import './styles.scss';
 export type { LocalToastProviderProps } from './provider';
 export type { ToastComponentProps, ToastPlacement, DefaultToastComponentProps, DefaultToastData } from './types';
 export { createCustomLocalToast } from './factory';

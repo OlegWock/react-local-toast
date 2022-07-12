@@ -1,4 +1,5 @@
 import babel from 'rollup-plugin-babel';
+import scss from 'rollup-plugin-scss';
 import commonjs from 'rollup-plugin-commonjs';
 import nodeResolve from 'rollup-plugin-node-resolve';
 import replace from 'rollup-plugin-replace';
@@ -118,6 +119,10 @@ const getPlugins = (bundleType) => [
         'process.env.NODE_ENV': JSON.stringify(isProduction(bundleType) ? 'production' : 'development'),
     }),
     sourcemaps(),
+    scss({
+        output: isProduction(bundleType) ? './dist/bundle.min.css' : './dist/bundle.css',
+        outputStyle: isProduction(bundleType) ? 'compressed' : 'expanded',
+    }),
     sizeSnapshot(),
     isProduction(bundleType) &&
         terser({

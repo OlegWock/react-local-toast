@@ -1,151 +1,30 @@
 import React from 'react';
-import styled, { css, keyframes } from 'styled-components';
 import clsx from 'clsx';
 import { IoIosCheckmarkCircle, IoIosInformationCircle } from 'react-icons/io';
 import { IoCloseCircleSharp } from 'react-icons/io5';
 import { RiErrorWarningFill } from 'react-icons/ri';
 import { AiOutlineLoading } from 'react-icons/ai';
-import { TransitionStatus } from 'react-transition-group';
 import { createCustomLocalToast } from './factory';
 import { DefaultToastData, ToastPlacement, ToastComponentProps } from './types';
 import { DEFAULT_PLACEMENT } from './const';
 import { createHocFromHook } from './hoc';
 
-const animationToShared = `
-    to {
-        transform: translate(0, 0) scale(1);
-        opacity: 1;
-    }
-`;
-
 const animations = {
-    top: keyframes`
-        from {
-            transform: translateY(25%) scale(1);
-            opacity: 0;
-        }
-        ${animationToShared}
-    `,
-    bottom: keyframes`
-        from {
-            transform: translateY(-25%) scale(1);
-            opacity: 0;
-        }
-        ${animationToShared}
-    `,
-    left: keyframes`
-        from {
-            transform: translateX(25%) scale(1);
-            opacity: 0;
-        }
-        ${animationToShared}
-    `,
-    right: keyframes`
-        from {
-            transform: translateX(-25%) scale(1);
-            opacity: 0;
-        }
-        ${animationToShared}
-    `,
+    top: 'rltTop',
+    bottom: 'rltBottom',
+    left: 'rltLeft',
+    right: 'rltRight',
 };
 
-const spinKeyframes = keyframes`
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-`;
-
-const colorByType = {
-    info: '#3498db',
-    loading: '#3498db',
-    success: '#2ecc71',
-    warning: '#fa983a',
-    error: '#eb2f06',
-} as const;
-
-const iconSharedStyles = css`
-    pointer-events: none;
-    margin-right: 12px;
-    font-size: 24px;
-`;
-
-const SuccessIcon = styled(IoIosCheckmarkCircle)`
-    ${iconSharedStyles};
-    color: ${colorByType.success};
-`;
-
-const InfoIcon = styled(IoIosInformationCircle)`
-    ${iconSharedStyles};
-    color: ${colorByType.info};
-`;
-
-const WarningIcon = styled(RiErrorWarningFill)`
-    ${iconSharedStyles};
-    color: ${colorByType.warning};
-`;
-
-const ErrorIcon = styled(IoCloseCircleSharp)`
-    ${iconSharedStyles};
-    color: ${colorByType.error};
-`;
-
-const LoadingIcon = styled(AiOutlineLoading)`
-    ${iconSharedStyles};
-    color: ${colorByType.loading};
-    animation: ${spinKeyframes} linear infinite 1.5s;
-`;
 
 const iconByType = {
-    info: InfoIcon,
-    success: SuccessIcon,
-    warning: WarningIcon,
-    error: ErrorIcon,
-    loading: LoadingIcon,
+    info: IoIosInformationCircle,
+    success: IoIosCheckmarkCircle,
+    warning: RiErrorWarningFill,
+    error: IoCloseCircleSharp,
+    loading: AiOutlineLoading,
 };
 
-const ToastText = styled.span`
-    line-height: 1;
-    flex-grow: 1;
-`;
-
-const StyledToast = styled.div<{
-    $type: DefaultToastData['type'];
-    $state: TransitionStatus;
-    $duration: number;
-    $placement: ToastPlacement;
-    $disableTransition: boolean;
-}>`
-    padding: 6px 12px;
-    z-index: 9999;
-    background-color: white;
-    color: #333;
-    font-size: 14px;
-    box-shadow: 0 3px 6px -4px #0000001f, 0 6px 16px #00000014, 0 9px 28px 8px #0000000d;
-    border-radius: 3px;
-    min-width: 150px;
-    max-width: min(300px, calc(80vw - 8px));
-    min-height: 30px;
-    display: flex;
-    ${({ $disableTransition }) => ($disableTransition ? '' : 'transition: 0.1s linear;')}
-    justify-content: center;
-    align-items: center;
-    border: 2px solid ${({ $type }) => colorByType[$type]};
-    animation: ${({ $state, $duration, $placement }) => {
-        if ($state === 'entering')
-            return css`
-                ${animations[$placement]} ${$duration}ms linear 0s 1 normal
-            `;
-        if ($state === 'exiting')
-            return css`
-                ${animations[$placement]} ${$duration}ms linear 0s 1 reverse
-            `;
-
-        return `none`;
-    }};
-`;
 
 const ToastComponent = React.forwardRef(
     (props: ToastComponentProps<DefaultToastData>, ref: React.Ref<HTMLElement>) => {
@@ -160,8 +39,19 @@ const ToastComponent = React.forwardRef(
         
         const contentIsText = ['string', 'number'].includes(typeof props.data.text);
         const Icon = iconByType[props.data.type];
+
+        let animation = 'none';
+        if (props.animation.state === 'entering') animation = `${animations[props.placement]} ${props.animation.duration}ms linear 0s 1 normal`;
+        if (props.animation.state === 'exiting') animation = `${animations[props.placement]} ${props.animation.duration}ms linear 0s 1 reverse`;
+
+        const styles = {
+            transition: disableTransitions ? 'none' : '0.1s linear',
+            animation,
+            ...props.style
+        };
+
         return (
-            <StyledToast
+            <div
                 className={clsx({
                     'react-local-toast': true,
                     [`react-local-toast-${props.data.type}`]: true,
@@ -170,19 +60,21 @@ const ToastComponent = React.forwardRef(
                     [`react-local-toast-${props.placement}`]: true,
                     'react-local-toast-disable-transitions': props.animation.disableTransitions,
                 })}
-                $type={props.data.type}
-                $placement={props.placement}
-                $state={props.animation.state}
-                $duration={props.animation.duration}
-                $disableTransition={props.animation.disableTransitions || disableTransitions}
-                style={props.style}
+                style={styles}
                 ref={ref as React.Ref<HTMLDivElement>}
                 role="presentation"
                 tabIndex={contentIsText ? -1 : 0}
             >
                 <Icon className="react-local-toast-icon" aria-hidden="true" />
-                <ToastText role={['warning', 'error'].includes(props.data.type) ?  'alert' : 'status'} aria-atomic="true" aria-live={['warning', 'error'].includes(props.data.type) ? 'assertive' : 'polite'} className="react-local-toast-text">{props.data.text}</ToastText>
-            </StyledToast>
+                <span 
+                    role={['warning', 'error'].includes(props.data.type) ?  'alert' : 'status'} 
+                    aria-atomic="true" 
+                    aria-live={'assertive'} 
+                    className="react-local-toast-text"
+                >
+                    {props.data.text}
+                </span>
+            </div>
         );
     }
 );
