@@ -127,6 +127,8 @@ class ClassComp extends React.Component<Props, any> {
 export default withLocalToast(ClassComp);
 ```
 
+This will pass toast-related functions (exactly same as in `useLocalToast` hook) as props to wrapped component.
+
 Cool, huh?
 
 ## License
