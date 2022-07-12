@@ -10,6 +10,7 @@ export interface LocalToastProviderProps<T> {
     Component?: ToastComponentType<T>;
     animationDuration?: number;
     defaultPlacement?: ToastPlacement;
+    portalInto?: HTMLElement,
 }
 
 export type LocalToastProviderType<T> = (props: LocalToastProviderProps<T>) => JSX.Element;
@@ -25,6 +26,7 @@ export const createProvider = <T,>(
         Component = ToastComponent,
         animationDuration = DEFAULT_ANIMATION_DURATION,
         defaultPlacement = DEFAULT_PLACEMENT,
+        portalInto = document.body,
     }: LocalToastProviderProps<T>) => {
         const [refs, setRefs] = React.useState<LocalToastContextType<T>['refs']>({});
         const [q, setQ] = React.useState<LocalToastContextType<T>['q']>([]);
@@ -122,7 +124,7 @@ export const createProvider = <T,>(
                 }}
             >
                 {children}
-                <Viewport />
+                <Viewport portalInto={portalInto} />
             </Context.Provider>
         );
     };

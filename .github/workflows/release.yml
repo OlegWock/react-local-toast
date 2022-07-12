@@ -1,0 +1,44 @@
+name: 'Build library, upload dist files'
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+    paths:
+      - 'package.json'
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: 'yarn'
+      - run: yarn install --frozen-lockfile
+      - id: set_var
+        run: |
+          content=`cat ./package.json`
+          # the following lines are only required for multi line json
+          content="${content//'%'/'%25'}"
+          content="${content//$'\n'/'%0A'}"
+          content="${content//$'\r'/'%0D'}"
+          # end of optional handling for multi line json
+          echo "::set-output name=packageJson::$content"
+      - run: yarn run build
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: "v${{fromJson(steps.set_var.outputs.packageJson).version}}"
+          generate_release_notes: true
+          files: |
+            dist/bundle.css
+            dist/bundle.min.css
+            dist/react-local-toast.cjs.development.js
+            dist/react-local-toast.cjs.production.js
+            dist/react-local-toast.esm.development.js
+            dist/react-local-toast.esm.production.js
+            dist/react-local-toast.umd.development.js
+            dist/react-local-toast.umd.production.js

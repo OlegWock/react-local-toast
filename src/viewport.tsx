@@ -17,6 +17,10 @@ interface ToastInfo<T> {
     data: T;
 }
 
+interface ViewportProps {
+    portalInto?: HTMLElement,
+}
+
 // Source: https://stackoverflow.com/questions/19014250/rerender-view-on-browser-resize-with-react
 const useWindowSize = () => {
     const [size, setSize] = React.useState([0, 0]);
@@ -32,7 +36,7 @@ const useWindowSize = () => {
 };
 
 export const createViewport = <T,>(context: Context<LocalToastContextType<T>>) => {
-    return () => {
+    return ({portalInto}: ViewportProps) => {
         const renderToast = (toast: ToastInfo<T>) => {
             const removeMe = () => {
                 setToasts((t) => t.filter((tst) => tst.id !== toast.id));
@@ -125,16 +129,13 @@ export const createViewport = <T,>(context: Context<LocalToastContextType<T>>) =
         };
 
         // Document is unavailable in Next.js SSR, so postpone actual rendering of portal
-        const ref = React.useRef<HTMLElement>();
         const [mounted, setMounted] = React.useState(false);
+        React.useEffect(() => {
+            setMounted(true);
+        }, []);
 
         // We don't really need window size, but we need to re-render once window size changes
         const [width, height] = useWindowSize();
-
-        React.useEffect(() => {
-            ref.current = document.body;
-            setMounted(true);
-        }, []);
 
         const { q, setQ, Component, animationDuration } = React.useContext(context);
         const [toasts, setToasts] = React.useState<ToastInfo<T>[]>([]);
@@ -216,11 +217,12 @@ export const createViewport = <T,>(context: Context<LocalToastContextType<T>>) =
         });
 
         if (!mounted) return null;
+
         return ReactDOM.createPortal(
             <>
                 <TransitionGroup component={null}>{toasts.map(renderToast)}</TransitionGroup>
             </>,
-            ref.current!
+            portalInto || document.body
         );
     };
 };

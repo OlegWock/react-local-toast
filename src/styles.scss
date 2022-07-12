@@ -2,6 +2,8 @@
     pointer-events: none;
     margin-right: 12px;
     font-size: 24px;
+    min-width: 24px;
+    min-height: 24px;
 }
 
 $colors: (
@@ -31,7 +33,7 @@ $colors: (
 
 
 .react-local-toast-text {
-    line-height: 1;
+    line-height: 1.5;
     flex-grow: 1;
 }
 
@@ -44,7 +46,7 @@ $colors: (
     box-shadow: 0 3px 6px -4px #0000001f, 0 6px 16px #00000014, 0 9px 28px 8px #0000000d;
     border-radius: 3px;
     min-width: 150px;
-    max-width: min(300px, calc(80vw - 8px));
+    max-width: min(350px, calc(80vw - 8px));
     min-height: 30px;
     display: flex;
     justify-content: center;
