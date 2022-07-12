@@ -1,6 +1,6 @@
 {
   "name": "react-local-toast",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Local toast helps you to provide feedback related to particular components on page",
   "main": "dist/index.js",
   "module": "dist/react-local-toast.esm.js",
