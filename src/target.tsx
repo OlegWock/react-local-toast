@@ -1,18 +1,26 @@
+import { useComposedRefs } from '@radix-ui/react-compose-refs';
 import { Slot } from '@radix-ui/react-slot';
 import React from 'react';
 import { LocalToastContextType } from './context';
 
-export interface LocalToastTargetProps {
+export interface LocalToastTargetPropsWithoutRef {
     name: string;
     children: React.ReactNode;
 }
 
-export type LocalToastTargetType = (props: LocalToastTargetProps) => JSX.Element;
+export interface LocalToastTargetProps<R> extends LocalToastTargetPropsWithoutRef {
+    ref?: React.Ref<R>
+}
+
+export type LocalToastTargetType = <R extends HTMLElement>(props: LocalToastTargetProps<R>) => JSX.Element;
 
 export const createTarget = <T,>(Context: React.Context<LocalToastContextType<T>>): LocalToastTargetType => {
-    return ({ name, children }: LocalToastTargetProps) => {
+    return React.forwardRef<HTMLElement, LocalToastTargetPropsWithoutRef>(<R extends HTMLElement,>({ name, children }: LocalToastTargetPropsWithoutRef, forwardedRef: React.ForwardedRef<R>) => {
         const ctx = React.useContext(Context);
-        const ref = React.useRef<HTMLElement>(null);
+        const ref = React.useRef<R>(null);
+
+        const composeRefs = useComposedRefs(forwardedRef, ref);
+        
         React.useEffect(() => {
             ctx.registerRef(name, ref);
             return () => {
@@ -20,6 +28,6 @@ export const createTarget = <T,>(Context: React.Context<LocalToastContextType<T>
             };
         }, []);
 
-        return <Slot ref={ref}>{children}</Slot>;
-    };
+        return <Slot ref={composeRefs}>{children}</Slot>;
+    }) as LocalToastTargetType;
 };
