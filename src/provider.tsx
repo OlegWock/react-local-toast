@@ -59,6 +59,7 @@ export const createProvider = <T,>(
             const ref = refs[name];
             if (!ref || !ref.current) {
                 console.warn(`Tried to show toast on not mounted component '${name}'`);
+                return '';
             }
 
             const id = uuidv4();
