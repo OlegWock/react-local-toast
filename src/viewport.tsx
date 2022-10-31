@@ -128,12 +128,6 @@ export const createViewport = <T,>(context: Context<LocalToastContextType<T>>) =
             );
         };
 
-        // Document is unavailable in Next.js SSR, so postpone actual rendering of portal
-        const [mounted, setMounted] = React.useState(false);
-        React.useEffect(() => {
-            setMounted(true);
-        }, []);
-
         // We don't really need window size, but we need to re-render once window size changes
         const [width, height] = useWindowSize();
 
@@ -215,8 +209,6 @@ export const createViewport = <T,>(context: Context<LocalToastContextType<T>>) =
                 );
             }
         });
-
-        if (!mounted) return null;
 
         return ReactDOM.createPortal(
             <>

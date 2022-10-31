@@ -106,6 +106,12 @@ export const createProvider = <T,>(
             });
         };
 
+        // Document is unavailable in Next.js SSR, so postpone actual rendering of viewport (portal)
+        const [mounted, setMounted] = React.useState(false);
+        React.useEffect(() => {
+            setMounted(true);
+        }, []);
+
         return (
             <Context.Provider
                 value={{
@@ -125,7 +131,7 @@ export const createProvider = <T,>(
                 }}
             >
                 {children}
-                <Viewport portalInto={portalInto} />
+                {mounted && <Viewport portalInto={portalInto} />}
             </Context.Provider>
         );
     };
