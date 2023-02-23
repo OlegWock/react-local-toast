@@ -1,6 +1,6 @@
 {
   "name": "react-local-toast",
-  "version": "1.1.4",
+  "version": "1.2.0",
   "description": "Local toast helps you to provide feedback related to particular components on page",
   "main": "dist/index.js",
   "module": "dist/react-local-toast.esm.js",
@@ -52,7 +52,6 @@
     "@radix-ui/react-compose-refs": "^1.0.0",
     "@radix-ui/react-slot": "^0.1.2",
     "clsx": "^1.1.1",
-    "react-icons": "^4.4.0",
     "react-transition-group": "^4.4.2",
     "tslib": "^2.3.0",
     "uuid": "^8.3.2"

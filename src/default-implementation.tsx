@@ -1,13 +1,10 @@
 import React from 'react';
 import clsx from 'clsx';
-import { IoIosCheckmarkCircle, IoIosInformationCircle } from 'react-icons/io';
-import { IoCloseCircleSharp } from 'react-icons/io5';
-import { RiErrorWarningFill } from 'react-icons/ri';
-import { AiOutlineLoading } from 'react-icons/ai';
 import { createCustomLocalToast } from './factory';
 import { DefaultToastData, ToastPlacement, ToastComponentProps } from './types';
 import { DEFAULT_PLACEMENT } from './const';
 import { createHocFromHook } from './hoc';
+import { AiOutlineLoading, IoCloseCircleSharp, IoIosCheckmarkCircle, IoIosInformationCircle, RiErrorWarningFill } from './icons';
 
 const animations = {
     top: 'rltTop',
